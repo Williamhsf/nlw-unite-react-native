@@ -44,9 +44,12 @@ export function Credential() {
           className="w-32 h-32"
         />
 
-        <Text className="font-body text-orange-500 text-sm">
-          Ampliar QRCode
-        </Text>
+        <TouchableOpacity activeOpacity={0.7} className="mt-6">
+          <Text className="font-body text-orange-500 text-sm">
+            Ampliar QRCode
+          </Text>
+        </TouchableOpacity>
+
       </View>
     </View>
   )
