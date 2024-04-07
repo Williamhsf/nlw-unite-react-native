@@ -1,27 +1,64 @@
+import { useState } from "react";
 import { 
   Text, 
-  View,  
+  View,
+  Alert,
+  Modal,
+  Share,
   StatusBar, 
   ScrollView,
+  TouchableOpacity
 } from "react-native";
 
 import { FontAwesome } from "@expo/vector-icons"
 
 import { Header } from "@/components/header";
+import { Button } from "@/components/button";
+// import { QRCode } from "@/components/qrcode"
 import { Credential } from "@/components/credential";
-
+import * as ImagePicker from "expo-image-picker"
 // import { useBadgeStore } from "@/store/badge-store"
 
 import { colors } from "@/styles/colors";
 
 export default function Ticket() {
+  const [image, setImage] = useState("")
+  const [expandQRCode, setExpandQRCode] = useState(false)
+
+  async function handleSelectImage() {
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 4],
+    })
+
+    if (result.assets) {
+      // badgeStore.updateAvatar(result.assets[0].uri)
+      setImage(result.assets[0].uri)
+    }
+
+    } catch (error) {
+      console.log(error)
+      Alert.alert("Foto", "Não foi possível selecionar a imagem.")
+    }
+  } 
+
   return (
     <View className="flex-1 bg-green-500">
         <StatusBar barStyle="light-content" />
 
         <Header title="Minha Credencial" />
-      <ScrollView className="-mt-28 -z-10" contentContainerClassName="px-8 pb-8">
-        <Credential />
+      <ScrollView 
+        className="-mt-28 -z-10" 
+        contentContainerClassName="px-8 pb-8"
+        showsVerticalScrollIndicator={false}
+      >
+        <Credential 
+          image={image} 
+          onChangeAvatar={handleSelectImage}
+          onExpandQRCode={() => setExpandQRCode(true)}
+        />
 
         <FontAwesome
               name="angle-double-down"
@@ -37,7 +74,19 @@ export default function Ticket() {
         <Text className="text-white font-regular text-base mt-1 mb-6">
             Mostre ao mundo que você vai participar do evento            
         </Text>
+
+        < Button title="Compartilhar" />
+
+        <TouchableOpacity 
+          className="mt-10"
+          activeOpacity={0.7}
+        >
+          <Text className="text-base text-white font-bold text-center">
+            Remover Ingresso
+          </Text>
+        </TouchableOpacity>
       </ScrollView>
+      
     </View>
   )
 }
