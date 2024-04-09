@@ -1,70 +1,69 @@
 import { useState } from "react";
-import { 
-  Text, 
+import {
+  Text,
   View,
   Alert,
   Modal,
   Share,
-  StatusBar, 
+  StatusBar,
   ScrollView,
   TouchableOpacity
 } from "react-native";
 
-import { FontAwesome } from "@expo/vector-icons"
+import { FontAwesome } from "@expo/vector-icons";
 
 import { Header } from "@/components/header";
 import { Button } from "@/components/button";
-// import { QRCode } from "@/components/qrcode"
+import { QRCode } from "@/components/qrcode"
 import { Credential } from "@/components/credential";
-import * as ImagePicker from "expo-image-picker"
+import * as ImagePicker from "expo-image-picker";
 // import { useBadgeStore } from "@/store/badge-store"
 
 import { colors } from "@/styles/colors";
 
 export default function Ticket() {
-  const [image, setImage] = useState("")
-  const [expandQRCode, setExpandQRCode] = useState(false)
+  const [image, setImage] = useState("");
+  const [expandQRCode, setExpandQRCode] = useState(false);
 
   async function handleSelectImage() {
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
-        aspect: [4, 4],
-    })
+        aspect: [4, 4]
+      });
 
-    if (result.assets) {
-      // badgeStore.updateAvatar(result.assets[0].uri)
-      setImage(result.assets[0].uri)
-    }
-
+      if (result.assets) {
+        // badgeStore.updateAvatar(result.assets[0].uri)
+        setImage(result.assets[0].uri);
+      }
     } catch (error) {
-      console.log(error)
-      Alert.alert("Foto", "Não foi possível selecionar a imagem.")
+      console.log(error);
+      Alert.alert("Foto", "Não foi possível selecionar a imagem.");
     }
-  } 
+  }
 
   return (
     <View className="flex-1 bg-green-500">
-        <StatusBar barStyle="light-content" />
+      <StatusBar barStyle="light-content" />
 
-        <Header title="Minha Credencial" />
-      <ScrollView 
-        className="-mt-28 -z-10" 
+      <Header title="Minha Credencial" />
+      <ScrollView
+        className="-mt-28 -z-10"
         contentContainerClassName="px-8 pb-8"
         showsVerticalScrollIndicator={false}
       >
-        <Credential 
-          image={image} 
+        <Credential
+          image={image}
           onChangeAvatar={handleSelectImage}
           onExpandQRCode={() => setExpandQRCode(true)}
         />
 
         <FontAwesome
-              name="angle-double-down"
-              color={colors.gray[300]}
-              size={24}
-              className="self-center my-6"
+          name="angle-double-down"
+          color={colors.gray[300]}
+          size={24}
+          className="self-center my-6"
         />
 
         <Text className="text-white font-bold text-2xl mt-4">
@@ -72,21 +71,31 @@ export default function Ticket() {
         </Text>
 
         <Text className="text-white font-regular text-base mt-1 mb-6">
-            Mostre ao mundo que você vai participar do evento            
+          Mostre ao mundo que você vai participar do evento
         </Text>
 
-        < Button title="Compartilhar" />
+        <Button title="Compartilhar" />
 
-        <TouchableOpacity 
-          className="mt-10"
-          activeOpacity={0.7}
-        >
+        <TouchableOpacity className="mt-10" activeOpacity={0.7}>
           <Text className="text-base text-white font-bold text-center">
             Remover Ingresso
           </Text>
         </TouchableOpacity>
       </ScrollView>
-      
+
+      <Modal visible={expandQRCode} statusBarTranslucent>
+        <View className="flex-1 bg-green-500 items-center justify-center">
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={() => setExpandQRCode(false)}
+          >
+            <QRCode value="teste" size={300} />
+            <Text className="font-body text-orange-500 text-sm mt-10 text-center">
+              Fechar QRCode
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
     </View>
-  )
+  );
 }
