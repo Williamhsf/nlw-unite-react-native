@@ -4,7 +4,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons"
 import { Link, Redirect } from "expo-router"
 
 import { api } from "@/server/api"
-// import { useBadgeStore } from "@/store/badge-store"
+import { useBadgeStore } from "@/store/badge-store"
 
 import { colors } from "@/styles/colors"
 
@@ -15,7 +15,7 @@ export default function Home() {
   const [code, setCode] = useState("")
   const [isLoading, setIsLoading] = useState(false)
 
-  // const badgeStore = useBadgeStore()
+  const badgeStore = useBadgeStore()
 
   async function handleAccessCredential() {
     try {
@@ -26,14 +26,17 @@ export default function Home() {
       setIsLoading(true)
 
       const { data } = await api.get(`/attendees/${code}/badge`)
-      console.log(data)
-      // badgeStore.save(data.badge)
+      badgeStore.save(data.badge)
     } catch (error) {
       console.log(error)
       setIsLoading(false)
 
       Alert.alert("Ingresso", "Ingresso não encontrado!")
     }
+  }
+
+  if (badgeStore.data?.checkInURL) {
+    return <Redirect href="/ticket" />
   }
 
   return (
